@@ -1,0 +1,11 @@
+# Turn on the rewrite engine (mod_rewrite must be enabled)
+RewriteEngine On
+
+# Rule 1: Skip the rule if the request is a real FILE (css, js, images...)
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Rule 2: Skip the rule if the request is a real FOLDER
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# If both conditions are true → send everything to index.php
+RewriteRule ^ index.php [QSA,L]
