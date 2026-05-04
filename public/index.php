@@ -101,6 +101,9 @@ elseif ($method === 'GET' && $uri === '/api/user') {
 elseif ($method === 'POST' && $uri === '/api/user') {
     $userController->create();
 }
+elseif ($method === 'POST' && $uri === '/api/user/fast') {
+    $userController->fastCreate();
+}
 elseif ($method === 'GET' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
     $userController->getById((int) $matches[1]);
 }
