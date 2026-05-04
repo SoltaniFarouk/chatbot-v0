@@ -59,6 +59,7 @@ class VisitorController
                 'visitor_token' => $visitor->visitor_token,
                 'terminal'      => $visitor->terminal,
                 'ip_address'    => $visitor->ip_address,
+                'user_id'       => $visitor->user_id,
                 'created_at'    => $visitor->created_at,
             ]
         ]);

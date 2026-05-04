@@ -5,6 +5,10 @@ use app\Repository\VisitorRepository;
 use app\Service\VisitorService;
 use app\Controller\VisitorController;
 
+use app\Repository\UserRepository;
+use app\Service\UserService;
+use app\Controller\UserController;
+
 // Load .env
 $envPath = '/var/www/.env';
 if (file_exists($envPath)) {
@@ -33,6 +37,9 @@ $repository = new VisitorRepository($pdo);
 $service    = new VisitorService($repository);
 $controller = new VisitorController($service);
 
+$userRepository = new UserRepository($pdo);
+$userService    = new UserService($userRepository);
+$userController = new UserController($userService);
 // ============ ROUTES ============
 
 // POST /api/visitor/register

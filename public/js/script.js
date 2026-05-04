@@ -38,9 +38,29 @@ async function checkToken() {
     const token = localStorage.getItem('chatbot20_token');
 
     if (token) {
-        console.log('Token exists:', token);
-        
-        return token;
+        //console.log('Token exists:', token);
+        //return token;
+        try {
+            const response = await fetch('/api/visitor/' + token);
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('Token exists:', token);
+                console.log('Visitor ID:', data.data.visitor_id);
+                console.log('User ID:', data.data.user_id);
+                return data.data;
+            } else {
+                // Token exists in localStorage but not in DB
+                console.log('Token not found in DB, registering new visitor...');
+                localStorage.removeItem('chatbot20_token');
+                localStorage.removeItem('chatbot20_visitor_id');
+                return await registerVisitor();
+            }
+
+        } catch (error) {
+            console.error('API error:', error);
+            return null;
+        }
     } else {
         console.log('No token found, registering visitor...');
         const newToken = await registerVisitor();
