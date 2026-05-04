@@ -49,51 +49,6 @@ class ConversationController
         }
     }
 
-    // POST /api/conversation/answer
-    public function saveAnswer(): void
-    {
-        $data = $this->getJsonBody();
-
-        if (empty($data['conversation_id']) || empty($data['question_id'])) {
-            $this->json([
-                'success' => false,
-                'message' => 'conversation_id and question_id are required'
-            ], 400);
-            return;
-        }
-
-        try {
-            $answer = $this->service->saveAnswer(
-                conversation_id: (int) $data['conversation_id'],
-                question_id:     (int) $data['question_id'],
-                value_text:      $data['value_text'] ?? null,
-                value_int:       isset($data['value_int']) ? (int) $data['value_int'] : null,
-                value_decimal:   isset($data['value_decimal']) ? (float) $data['value_decimal'] : null,
-                answer_id:       isset($data['answer_id']) ? (int) $data['answer_id'] : null
-            );
-
-            $this->json([
-                'success' => true,
-                'message' => 'Answer saved',
-                'data'    => [
-                    'id'              => $answer->id,
-                    'conversation_id' => $answer->conversation_id,
-                    'question_id'     => $answer->question_id,
-                    'value_text'      => $answer->value_text,
-                    'value_int'       => $answer->value_int,
-                    'value_decimal'   => $answer->value_decimal,
-                    'created_at'      => $answer->created_at,
-                ]
-            ], 201);
-
-        } catch (\Exception $e) {
-            $this->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
     private function getJsonBody(): array
     {
         $raw = file_get_contents('php://input');

@@ -1,9 +1,6 @@
 <?php
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-
 use app\Connection\Database;
+
 use app\Repository\VisitorRepository;
 use app\Service\VisitorService;
 use app\Controller\VisitorController;
@@ -16,6 +13,14 @@ use app\Repository\QuestionRepository;
 use app\Service\QuestionService;
 use app\Controller\QuestionController;
 
+use app\Repository\ConversationRepository;
+use app\Service\ConversationService;
+use app\Controller\ConversationController;
+
+use app\Repository\ConversationAnswerRepository;
+use app\Service\ConversationAnswerService;
+use app\Controller\ConversationAnswerController;
+
 // Load .env
 $envPath = '/var/www/.env';
 if (file_exists($envPath)) {
@@ -27,63 +32,104 @@ if (file_exists($envPath)) {
     }
 }
 
-// Autoload classes
+// Autoload
 spl_autoload_register(function ($class) {
     $path = '/var/www/' . str_replace('\\', '/', $class) . '.php';
     if (file_exists($path)) require_once $path;
 });
 
-// Get request info
+// Request info
 $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri    = rtrim($uri, '/');
 
-// Bootstrap DB + Controllers
-$pdo        = (new Database())->connect();
-$repository = new VisitorRepository($pdo);
-$service    = new VisitorService($repository);
-$controller = new VisitorController($service);
+// Bootstrap
+$pdo = (new Database())->connect();
 
-$userRepository = new UserRepository($pdo);
-$userService    = new UserService($userRepository);
-$userController = new UserController($userService);
+// Visitor
+$visitorController = new VisitorController(
+    new VisitorService(
+        new VisitorRepository($pdo)
+    )
+);
 
-$questionRepository = new QuestionRepository($pdo);
-$questionService    = new QuestionService($questionRepository);
-$questionController = new QuestionController($questionService);
+// User
+$userController = new UserController(
+    new UserService(
+        new UserRepository($pdo)
+    )
+);
+
+// Question
+$questionController = new QuestionController(
+    new QuestionService(
+        new QuestionRepository($pdo)
+    )
+);
+
+// Conversation
+$conversationController = new ConversationController(
+    new ConversationService(
+        new ConversationRepository($pdo)
+    )
+);
+
+// ConversationAnswer
+$conversationAnswerController = new ConversationAnswerController(
+    new ConversationAnswerService(
+        new ConversationAnswerRepository($pdo)
+    )
+);
+
 // ============ ROUTES ============
 
-// POST /api/visitor/register
+// Visitor
 if ($method === 'POST' && $uri === '/api/visitor/register') {
-    $controller->register();
+    $visitorController->register();
 }
-
-// GET /api/visitor/{token}
 elseif ($method === 'GET' && preg_match('#^/api/visitor/([a-f0-9]+)$#', $uri, $matches)) {
-    $controller->getByToken($matches[1]);
+    $visitorController->getByToken($matches[1]);
 }
-
-// DELETE /api/visitor/{id}
 elseif ($method === 'DELETE' && preg_match('#^/api/visitor/(\d+)$#', $uri, $matches)) {
-    $controller->delete((int) $matches[1]);
+    $visitorController->delete((int) $matches[1]);
 }
 
-// GET /api/user/{id}
+// User
+elseif ($method === 'GET' && $uri === '/api/user') {
+    $userController->getAll();
+}
+elseif ($method === 'POST' && $uri === '/api/user') {
+    $userController->create();
+}
 elseif ($method === 'GET' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
     $userController->getById((int) $matches[1]);
 }
+elseif ($method === 'DELETE' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
+    $userController->delete((int) $matches[1]);
+}
 
-// GET /api/question/{id}
+// Question
+elseif ($method === 'GET' && $uri === '/api/question') {
+    $questionController->getAll();
+}
 elseif ($method === 'GET' && preg_match('#^/api/question/(\d+)$#', $uri, $matches)) {
     $questionController->getById((int) $matches[1]);
 }
 
-// GET /api/question
-elseif ($method === 'GET' && $uri === '/api/question') {
-    $questionController->getAll();
+// Conversation
+elseif ($method === 'POST' && $uri === '/api/conversation') {
+    $conversationController->create();
 }
 
-// GET / → serve chatbot UI
+// ConversationAnswer
+elseif ($method === 'POST' && $uri === '/api/conversation-answer') {
+    $conversationAnswerController->save();
+}
+elseif ($method === 'GET' && preg_match('#^/api/conversation-answer/(\d+)$#', $uri, $matches)) {
+    $conversationAnswerController->getByConversationId((int) $matches[1]);
+}
+
+// Home
 elseif ($method === 'GET' && $uri === '') {
     require_once __DIR__ . '/home.php';
 }
@@ -94,4 +140,3 @@ else {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Route not found']);
 }
-

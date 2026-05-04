@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Service;
 
 use app\Model\ConversationAnswer;
@@ -19,21 +20,20 @@ class ConversationAnswerService
         ?string $value_text = null,
         ?int $value_int = null,
         ?float $value_decimal = null,
-        ?int $answer_id = null
+        ?int $answer_id = null,
+        bool $is_valid = true,
+        ?string $raw_input = null
     ): ConversationAnswer {
-
-        // Validate at least one value is provided
-        if ($value_text === null && $value_int === null && $value_decimal === null && $answer_id === null) {
-            throw new \InvalidArgumentException('At least one value must be provided');
-        }
 
         $answer = new ConversationAnswer(
             conversation_id: $conversation_id,
-            question_id:     $question_id,
-            answer_id:       $answer_id,
-            value_text:      $value_text,
-            value_int:       $value_int,
-            value_decimal:   $value_decimal
+            question_id: $question_id,
+            answer_id: $answer_id,
+            value_text: $value_text,
+            value_int: $value_int,
+            value_decimal: $value_decimal,
+            is_valid: $is_valid,
+            raw_input: $raw_input
         );
 
         return $this->repository->create($answer);
@@ -41,10 +41,6 @@ class ConversationAnswerService
 
     public function getAnswersByConversationId(int $conversation_id): array
     {
-        if ($conversation_id <= 0) {
-            throw new \InvalidArgumentException('Invalid conversation_id');
-        }
-
         return $this->repository->findByConversationId($conversation_id);
     }
 }

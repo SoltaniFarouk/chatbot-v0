@@ -1,5 +1,5 @@
 <?php
-namespace app\Model;
+namespace App\Model;
 
 class ConversationAnswer
 {
@@ -10,6 +10,8 @@ class ConversationAnswer
     public ?string $value_text;
     public ?int $value_int;
     public ?float $value_decimal;
+    public bool $is_valid;
+    public ?string $raw_input;
     public ?string $created_at;
 
     public function __construct(
@@ -19,6 +21,8 @@ class ConversationAnswer
         ?string $value_text = null,
         ?int $value_int = null,
         ?float $value_decimal = null,
+        bool $is_valid = true,
+        ?string $raw_input = null,
         ?int $id = null,
         ?string $created_at = null
     ) {
@@ -29,6 +33,8 @@ class ConversationAnswer
         $this->value_text      = $value_text;
         $this->value_int       = $value_int;
         $this->value_decimal   = $value_decimal;
+        $this->is_valid        = $is_valid;
+        $this->raw_input       = $raw_input;
         $this->created_at      = $created_at;
     }
 }
