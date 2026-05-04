@@ -1,3 +1,19 @@
+// ============ API SERVICE ============
+const ApiService = {
+    async post(url, body) {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        return await response.json();
+    },
+
+    async get(url) {
+        const response = await fetch(url);
+        return await response.json();
+    }
+};
 // ============ VALIDATION SERVICE ============
 const ConversationAnswerService = {
     async save(conversationId, questionId, valueText = null, valueInt = null, valueDecimal = null, isValid = true, rawInput = null) {
@@ -12,8 +28,7 @@ const ConversationAnswerService = {
         });
     }
 };
-
-
+// ============ VALIDATION SERVICE ============
 const ValidationService = {
 
     validate(question, value) {
@@ -124,7 +139,18 @@ const ValidationService = {
         return { valid: true, parsed: num };
     }
 };
+// ============ HELPER ============
+function addMessage(type, text) {
+    const messages = document.getElementById('messages');
+    const msg = document.createElement('div');
+    msg.className = 'message ' + type;
+    msg.innerHTML = text;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+}
 
+// ==============================================================================
+// ============ MAIN LOGIC ============
 
 async function registerVisitor() {
     try {
@@ -372,6 +398,8 @@ async function displayWelcomeMessage(visitor) {
 
     messages.scrollTop = messages.scrollHeight;
 }
+
+
 
 window.onload = async function () {
     const visitor = await checkToken();
