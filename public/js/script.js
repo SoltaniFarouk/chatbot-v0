@@ -150,9 +150,9 @@ function displayWelcomeMessage(visitor) {
     botMsg.className = 'message bot';
 
     if (visitor && visitor.user && visitor.user.username) {
-        botMsg.innerHTML = 'Bot: Hello ' + visitor.user.username + '! How can I help you?';
+        botMsg.innerHTML = 'Bot: Hello ' + visitor.user.username + '! I can help you find the best health insurance package. To get started';
     } else {
-        botMsg.innerHTML = 'Bot: Hello! How can I help you?';
+        botMsg.innerHTML = 'Bot: Hello! I can help you find the best health insurance package. To get started';
     }
 
     messages.appendChild(botMsg);
