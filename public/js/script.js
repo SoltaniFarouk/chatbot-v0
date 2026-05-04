@@ -291,10 +291,7 @@ async function sendMessage() {
         const questions       = JSON.parse(localStorage.getItem('chatbot20_questions'));
         const currentStep     = parseInt(localStorage.getItem('chatbot20_current_step'));
         const currentQuestion = questions[currentStep];
-        
-        //console.log('A questions:', questions);
-        //console.log('A text:', text);
-        //console.log('A currentQuestion:', currentQuestion);
+
 
         // Step 1 - Validate answer
         const validation = ValidationService.validate(currentQuestion, text);
@@ -313,6 +310,22 @@ async function sendMessage() {
             } else {
                 value_text = text;
             }
+
+            // if Step is email, used api/user/fast to create user immediately and link to conversation
+            if (description.includes('email')) {
+                try {
+                    // Create user with minimal info (email only)
+                    const userResponse = await ApiService.post('/api/user/fast', {
+                        email: text
+                    });
+                    if (userResponse.success) {
+                        const userId = userResponse.data.user_id;
+                        console.log('User created with ID:', userId);
+                    }
+                } catch (error) {
+                    console.error('Error creating user:', error);
+                }
+            }           
         }
 
 
