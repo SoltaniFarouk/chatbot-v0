@@ -1,7 +1,7 @@
 <?php
-namespace app\Repository;
+namespace App\Repository;
 
-use app\Model\ConversationAnswer;
+use App\Model\ConversationAnswer;
 use PDO;
 
 class ConversationAnswerRepository
@@ -14,28 +14,28 @@ class ConversationAnswerRepository
     }
 
     public function create(ConversationAnswer $answer): ConversationAnswer
-{
-    $stmt = $this->pdo->prepare("
-        INSERT INTO tb_conversation_answer
-            (conversation_id, question_id, answer_id, value_text, value_int, value_decimal, is_valid, raw_input)
-        VALUES
-            (:conversation_id, :question_id, :answer_id, :value_text, :value_int, :value_decimal, :is_valid, :raw_input)
-    ");
+    {
+        $stmt = $this->pdo->prepare("
+            INSERT INTO tb_conversation_answer
+                (conversation_id, question_id, answer_id, value_text, value_int, value_decimal, is_valid, raw_input)
+            VALUES
+                (:conversation_id, :question_id, :answer_id, :value_text, :value_int, :value_decimal, :is_valid, :raw_input)
+        ");
 
-    $stmt->execute([
-        ':conversation_id' => $answer->conversation_id,
-        ':question_id'     => $answer->question_id,
-        ':answer_id'       => $answer->answer_id,
-        ':value_text'      => $answer->value_text,
-        ':value_int'       => $answer->value_int,
-        ':value_decimal'   => $answer->value_decimal,
-        ':is_valid'        => $answer->is_valid,
-        ':raw_input'       => $answer->raw_input,
-    ]);
+        $stmt->execute([
+            ':conversation_id' => $answer->conversation_id,
+            ':question_id'     => $answer->question_id,
+            ':answer_id'       => $answer->answer_id,
+            ':value_text'      => $answer->value_text,
+            ':value_int'       => $answer->value_int,
+            ':value_decimal'   => $answer->value_decimal,
+            ':is_valid'        => $answer->is_valid,
+            ':raw_input'       => $answer->raw_input,
+        ]);
 
-    $answer->id = (int) $this->pdo->lastInsertId();
-    return $answer;
-}
+        $answer->id = (int) $this->pdo->lastInsertId();
+        return $answer;
+    }
 
     public function findByConversationId(int $conversation_id): array
     {
@@ -59,6 +59,8 @@ class ConversationAnswerRepository
             value_text:      $row['value_text'],
             value_int:       $row['value_int'],
             value_decimal:   $row['value_decimal'],
+            is_valid:        (bool) $row['is_valid'],
+            raw_input:       $row['raw_input'],
             id:              $row['id'],
             created_at:      $row['created_at']
         );

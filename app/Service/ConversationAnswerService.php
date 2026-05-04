@@ -1,5 +1,4 @@
 <?php
-
 namespace app\Service;
 
 use app\Model\ConversationAnswer;
@@ -25,15 +24,16 @@ class ConversationAnswerService
         ?string $raw_input = null
     ): ConversationAnswer {
 
+        // raw_input is always saved - no restriction needed
         $answer = new ConversationAnswer(
             conversation_id: $conversation_id,
-            question_id: $question_id,
-            answer_id: $answer_id,
-            value_text: $value_text,
-            value_int: $value_int,
-            value_decimal: $value_decimal,
-            is_valid: $is_valid,
-            raw_input: $raw_input
+            question_id:     $question_id,
+            answer_id:       $answer_id,
+            value_text:      $value_text,
+            value_int:       $value_int,
+            value_decimal:   $value_decimal,
+            is_valid:        $is_valid,
+            raw_input:       $raw_input
         );
 
         return $this->repository->create($answer);

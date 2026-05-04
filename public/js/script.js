@@ -17,6 +17,14 @@ const ApiService = {
 // ============ VALIDATION SERVICE ============
 const ConversationAnswerService = {
     async save(conversationId, questionId, valueText = null, valueInt = null, valueDecimal = null, isValid = true, rawInput = null) {
+        console.log('A conversationId:', conversationId);
+        console.log('A questionId:', questionId);
+        console.log('A valueText:', valueText);
+        console.log('A valueInt:', valueInt);
+        console.log('A valueDecimal:', valueDecimal);
+        console.log('A isValid:', isValid);
+        console.log('A rawInput:', rawInput);
+
         return await ApiService.post('/api/conversation-answer', {
             conversation_id: conversationId,
             question_id:     questionId,
@@ -283,10 +291,14 @@ async function sendMessage() {
         const questions       = JSON.parse(localStorage.getItem('chatbot20_questions'));
         const currentStep     = parseInt(localStorage.getItem('chatbot20_current_step'));
         const currentQuestion = questions[currentStep];
+        
+        //console.log('A questions:', questions);
+        //console.log('A text:', text);
+        //console.log('A currentQuestion:', currentQuestion);
 
         // Step 1 - Validate answer
         const validation = ValidationService.validate(currentQuestion, text);
-
+     
         // Step 2 - Always save the answer (valid or not)
         const description = currentQuestion.description.toLowerCase();
         let value_text    = null;
@@ -302,6 +314,19 @@ async function sendMessage() {
                 value_text = text;
             }
         }
+
+
+        //add console log to check values before saving
+        console.log('Saving answer:', {
+            conversation_id: conversationId,
+            question_id: currentQuestion.id,
+            value_text: value_text,
+            value_int: value_int,
+            value_decimal: value_decimal,
+            is_valid: validation.valid,
+            raw_input: text
+        });
+        
 
         // Step 3 - Save to API (always - valid or invalid)
         await ConversationAnswerService.save(
