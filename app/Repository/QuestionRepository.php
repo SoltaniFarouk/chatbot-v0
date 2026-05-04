@@ -26,6 +26,17 @@ class QuestionRepository
         return $this->mapToModel($row);
     }
 
+    public function findAllActive(): array
+   {
+        $stmt = $this->pdo->query("
+            SELECT description, step_order 
+            FROM tb_question 
+            WHERE is_active = 1
+            ORDER BY step_order ASC
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private function mapToModel(array $row): Question
     {
         return new Question(

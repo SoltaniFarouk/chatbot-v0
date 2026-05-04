@@ -27,4 +27,9 @@ class QuestionService
 
         return $question;
     }
+
+    public function getAllActiveQuestions(): array
+    {
+        return $this->repository->findAllActive();
+    }
 }

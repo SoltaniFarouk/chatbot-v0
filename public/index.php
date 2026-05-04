@@ -78,6 +78,11 @@ elseif ($method === 'GET' && preg_match('#^/api/question/(\d+)$#', $uri, $matche
     $questionController->getById((int) $matches[1]);
 }
 
+// GET /api/question
+elseif ($method === 'GET' && $uri === '/api/question') {
+    $questionController->getAll();
+}
+
 // GET / → serve chatbot UI
 elseif ($method === 'GET' && $uri === '') {
     require_once __DIR__ . '/home.php';

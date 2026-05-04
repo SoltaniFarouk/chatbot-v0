@@ -37,6 +37,26 @@ class QuestionController
         }
     }
 
+    // GET /api/question
+    public function getAll(): void
+    {
+        try {
+            $questions = $this->service->getAllActiveQuestions();
+
+            $this->json([
+                'success' => true,
+                'data'    => $questions
+            ]);
+
+        } catch (\Exception $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     private function json(array $data, int $status = 200): void
     {
         http_response_code($status);

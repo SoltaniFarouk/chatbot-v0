@@ -143,7 +143,7 @@ function sendMessage() {
     input.value = '';
     messages.scrollTop = messages.scrollHeight;
 }
-
+/*
 function displayWelcomeMessage(visitor) {
     const messages = document.getElementById('messages');
     const botMsg = document.createElement('div');
@@ -156,10 +156,49 @@ function displayWelcomeMessage(visitor) {
     }
 
     messages.appendChild(botMsg);
+}*/
+
+async function displayWelcomeMessage(visitor) {
+    const messages = document.getElementById('messages');
+
+    // Welcome message
+    const welcomeMsg = document.createElement('div');
+    welcomeMsg.className = 'message bot';
+
+    if (visitor && visitor.user && visitor.user.username) {
+        welcomeMsg.innerHTML = 'Bot: Hello ' + visitor.user.username + '! I can help you find the best health insurance package.';
+        messages.appendChild(welcomeMsg);
+    } else {
+        welcomeMsg.innerHTML = 'Bot: Hello! I can help you find the best health insurance package. To get started, please answer a few questions.';
+        messages.appendChild(welcomeMsg);
+
+        // Get first question from API
+        try {
+            const response = await fetch('/api/question');
+            const data = await response.json();
+
+            if (data.success && data.data.length > 0) {
+                // Get first question (step_order 1)
+                const firstQuestion = data.data[0];
+
+                const questionMsg = document.createElement('div');
+                questionMsg.className = 'message bot';
+                questionMsg.innerHTML = 'Bot: ' + firstQuestion.description;
+                messages.appendChild(questionMsg);
+
+                // Store current question step
+                localStorage.setItem('chatbot20_current_step', firstQuestion.step_order);
+            }
+
+        } catch (error) {
+            console.error('Failed to load first question:', error);
+        }
+    }
+
+    messages.scrollTop = messages.scrollHeight;
 }
 
 window.onload = async function () {
-    //await checkToken();
     const visitor = await checkToken();
-    displayWelcomeMessage(visitor);
+    await displayWelcomeMessage(visitor);
 };
