@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Repository;
 
 use app\Model\User;
@@ -31,6 +32,24 @@ class UserRepository
             ':number_covered' => $user->number_covered,
             ':family_status'  => $user->family_status,
             ':is_enabled'     => $user->is_enabled,
+        ]);
+
+        $user->user_id = (int) $this->pdo->lastInsertId();
+        return $user;
+    }
+
+    public function fast_create(User $user): User
+    {
+        $stmt = $this->pdo->prepare("
+        INSERT INTO tb_user 
+            (username, email)
+        VALUES 
+            (:username, :email)
+    ");
+
+        $stmt->execute([
+            ':username' => $user->username,
+            ':email'    => $user->email,
         ]);
 
         $user->user_id = (int) $this->pdo->lastInsertId();
@@ -120,17 +139,17 @@ class UserRepository
     private function mapToModel(array $row): User
     {
         return new User(
-            username:       $row['username'],
-            email:          $row['email'],
-            family_status:  $row['family_status'],
+            username: $row['username'],
+            email: $row['email'],
+            family_status: $row['family_status'],
             number_covered: $row['number_covered'],
-            address:        $row['address'],
-            age:            $row['age'],
-            phone_number:   $row['phone_number'],
-            is_enabled:     (bool) $row['is_enabled'],
-            user_id:        $row['user_id'],
-            created_at:     $row['created_at'],
-            updated_at:     $row['updated_at']
+            address: $row['address'],
+            age: $row['age'],
+            phone_number: $row['phone_number'],
+            is_enabled: (bool) $row['is_enabled'],
+            user_id: $row['user_id'],
+            created_at: $row['created_at'],
+            updated_at: $row['updated_at']
         );
     }
 }

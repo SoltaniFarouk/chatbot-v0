@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Controller;
 
 use app\Service\UserService;
@@ -30,13 +31,13 @@ class UserController
 
         try {
             $user = $this->service->createUser(
-                username:       $data['username'],
-                email:          $data['email'],
-                family_status:  $data['family_status'],
+                username: $data['username'],
+                email: $data['email'],
+                family_status: $data['family_status'],
                 number_covered: $data['number_covered'] ?? 1,
-                address:        $data['address'] ?? null,
-                age:            $data['age'] ?? null,
-                phone_number:   $data['phone_number'] ?? null
+                address: $data['address'] ?? null,
+                age: $data['age'] ?? null,
+                phone_number: $data['phone_number'] ?? null
             );
 
             $this->json([
@@ -44,7 +45,38 @@ class UserController
                 'message' => 'User created successfully',
                 'data'    => $this->format($user)
             ], 201);
+        } catch (\InvalidArgumentException $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
 
+    // POST /api/user/fast
+    public function fastCreate(): void
+    {
+        $data = $this->getJsonBody();
+
+        if (empty($data['email'])) {
+            $this->json([
+                'success' => false,
+                'message' => "Field 'email' is required"
+            ], 400);
+            return;
+        }
+
+        try {
+            $user = $this->service->fastCreateUser(
+                username: $data['username'] ?? null,
+                email: $data['email']
+            );
+
+            $this->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'data'    => $this->format($user)
+            ], 201);
         } catch (\InvalidArgumentException $e) {
             $this->json([
                 'success' => false,
@@ -102,6 +134,9 @@ class UserController
         ]);
     }
 
+    // Helper method to format User model into an array for JSON response
+    // This ensures we only expose the fields we want and can also format dates or other fields as needed
+    // For example, we might want to format the created_at date into a more readable format or exclude certain fields
     private function format($user): array
     {
         return [
@@ -118,12 +153,18 @@ class UserController
         ];
     }
 
+    // Helper methods   
+    // Reads raw JSON body and decodes it into an associative array
+    // Returns an empty array if the body is not valid JSON or is empty
     private function getJsonBody(): array
     {
         $raw = file_get_contents('php://input');
         return json_decode($raw, true) ?? [];
     }
 
+    // Sends a JSON response with the given data and HTTP status code
+    // Automatically sets the Content-Type header and encodes the data as JSON
+    // Exits the script after sending the response
     private function json(array $data, int $status = 200): void
     {
         http_response_code($status);

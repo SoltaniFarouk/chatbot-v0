@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Service;
 
 use app\Model\User;
@@ -9,7 +10,10 @@ class UserService
     private UserRepository $repository;
 
     private const ALLOWED_FAMILY_STATUS = [
-        'single', 'married', 'divorced', 'widowed'
+        'single',
+        'married',
+        'divorced',
+        'widowed'
     ];
 
     public function __construct(UserRepository $repository)
@@ -48,16 +52,57 @@ class UserService
         }
 
         $user = new User(
-            username:       $username,
-            email:          $email,
-            family_status:  $family_status,
+            username: $username,
+            email: $email,
+            family_status: $family_status,
             number_covered: $number_covered,
-            address:        $address,
-            age:            $age,
-            phone_number:   $phone_number
+            address: $address,
+            age: $age,
+            phone_number: $phone_number
         );
 
         return $this->repository->create($user);
+    }
+
+    // Fast create with minimal info (for chatbot)
+    // Auto-generates username if not provided, and sets defaults for other fields
+    public function fastCreateUser(?string $username, string $email): User
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException("Invalid email format");
+        }
+
+        // Auto-generate username if not provided
+        if (empty($username)) {
+            $username = explode('@', $email)[0];
+        }
+
+        // Ensure uniqueness (important!)
+        $baseUsername = $username;
+        $i = 1;
+
+        while ($this->repository->findByUsername($username)) {
+            $username = $baseUsername . $i; // john → john1 → john2
+            $i++;
+        }
+
+        // Check email uniqueness
+        if ($this->repository->findByEmail($email)) {
+            throw new \InvalidArgumentException("Email already exists");
+        }
+
+        $user = new User(
+            username: $username,
+            email: $email,
+            family_status: 'not_defined',
+            number_covered: 1,
+            address: null,
+            age: null,
+            phone_number: null,
+            is_enabled: true
+        );
+
+        return $this->repository->fast_create($user);
     }
 
     public function getUserById(int $id): ?User
