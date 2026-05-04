@@ -12,6 +12,10 @@ use app\Repository\UserRepository;
 use app\Service\UserService;
 use app\Controller\UserController;
 
+use app\Repository\QuestionRepository;
+use app\Service\QuestionService;
+use app\Controller\QuestionController;
+
 // Load .env
 $envPath = '/var/www/.env';
 if (file_exists($envPath)) {
@@ -43,6 +47,10 @@ $controller = new VisitorController($service);
 $userRepository = new UserRepository($pdo);
 $userService    = new UserService($userRepository);
 $userController = new UserController($userService);
+
+$questionRepository = new QuestionRepository($pdo);
+$questionService    = new QuestionService($questionRepository);
+$questionController = new QuestionController($questionService);
 // ============ ROUTES ============
 
 // POST /api/visitor/register
@@ -63,6 +71,11 @@ elseif ($method === 'DELETE' && preg_match('#^/api/visitor/(\d+)$#', $uri, $matc
 // GET /api/user/{id}
 elseif ($method === 'GET' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
     $userController->getById((int) $matches[1]);
+}
+
+// GET /api/question/{id}
+elseif ($method === 'GET' && preg_match('#^/api/question/(\d+)$#', $uri, $matches)) {
+    $questionController->getById((int) $matches[1]);
 }
 
 // GET / → serve chatbot UI
