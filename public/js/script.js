@@ -17,13 +17,13 @@ const ApiService = {
 // ============ VALIDATION SERVICE ============
 const ConversationAnswerService = {
     async save(conversationId, questionId, valueText = null, valueInt = null, valueDecimal = null, isValid = true, rawInput = null) {
-        console.log('A conversationId:', conversationId);
-        console.log('A questionId:', questionId);
-        console.log('A valueText:', valueText);
-        console.log('A valueInt:', valueInt);
-        console.log('A valueDecimal:', valueDecimal);
-        console.log('A isValid:', isValid);
-        console.log('A rawInput:', rawInput);
+        //console.log('A conversationId:', conversationId);
+        //console.log('A questionId:', questionId);
+        //console.log('A valueText:', valueText);
+        //console.log('A valueInt:', valueInt);
+        //console.log('A valueDecimal:', valueDecimal);
+        //console.log('A isValid:', isValid);
+        //console.log('A rawInput:', rawInput);
 
         return await ApiService.post('/api/conversation-answer', {
             conversation_id: conversationId,
