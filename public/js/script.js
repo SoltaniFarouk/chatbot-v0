@@ -39,6 +39,7 @@ async function checkToken() {
 
     if (token) {
         console.log('Token exists:', token);
+        
         return token;
     } else {
         console.log('No token found, registering visitor...');
