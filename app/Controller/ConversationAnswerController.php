@@ -33,7 +33,8 @@ class ConversationAnswerController
                 value_int:       isset($data['value_int']) ? (int) $data['value_int'] : null,
                 value_decimal:   isset($data['value_decimal']) ? (float) $data['value_decimal'] : null,
                 answer_id:       isset($data['answer_id']) ? (int) $data['answer_id'] : null,
-                is_valid:        (bool) ($data['is_valid'] ?? true),
+                //is_valid:        (bool) ($data['is_valid'] ?? true),
+                is_valid: isset($data['is_valid']) ? (int)$data['is_valid'] : 1,
                 raw_input:       $data['raw_input'] ?? null
             );
 

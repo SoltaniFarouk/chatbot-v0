@@ -29,7 +29,8 @@ class ConversationAnswerRepository
             ':value_text'      => $answer->value_text,
             ':value_int'       => $answer->value_int,
             ':value_decimal'   => $answer->value_decimal,
-            ':is_valid'        => $answer->is_valid,
+            //':is_valid'        => $answer->is_valid,
+            ':is_valid' => (int) $answer->is_valid,
             ':raw_input'       => $answer->raw_input,
         ]);
 
