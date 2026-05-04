@@ -18,7 +18,7 @@
 <div class="chat-box" id="chatBox">
   <div class="chat-header">My Messenger Bot</div>
   <div class="chat-messages" id="messages">
-    <div class="message bot">Bot: Hello! How can I help you?</div>
+    <!-- First message will be added dynamically by JS -->
   </div>
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Type a message...">

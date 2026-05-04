@@ -1,4 +1,7 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
 
 use app\Connection\Database;
 use app\Repository\VisitorRepository;
@@ -57,6 +60,11 @@ elseif ($method === 'DELETE' && preg_match('#^/api/visitor/(\d+)$#', $uri, $matc
     $controller->delete((int) $matches[1]);
 }
 
+// GET /api/user/{id}
+elseif ($method === 'GET' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
+    $userController->getById((int) $matches[1]);
+}
+
 // GET / → serve chatbot UI
 elseif ($method === 'GET' && $uri === '') {
     require_once __DIR__ . '/home.php';
@@ -68,3 +76,4 @@ else {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Route not found']);
 }
+

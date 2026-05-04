@@ -16,7 +16,16 @@ async function registerVisitor() {
         if (data.success) {
             localStorage.setItem('chatbot20_token', data.data.visitor_token);
             console.log('New token created:', data.data.visitor_token);
-            return data.data.visitor_token;
+
+            // Return full visitor object
+            return {
+                visitor_id:    data.data.visitor_id,
+                visitor_token: data.data.visitor_token,
+                terminal:      data.data.terminal,
+                ip_address:    data.data.ip_address,
+                created_at:    data.data.created_at,
+                user:          null
+            };
         } else {
             console.error('Registration failed:', data.message);
             return null;
@@ -38,19 +47,52 @@ async function checkToken() {
     const token = localStorage.getItem('chatbot20_token');
 
     if (token) {
-        //console.log('Token exists:', token);
-        //return token;
         try {
-            const response = await fetch('/api/visitor/' + token);
-            const data = await response.json();
+            // Step 1 - Get visitor by token
+            const visitorResponse = await fetch('/api/visitor/' + token);
+            const visitorData = await visitorResponse.json();
 
-            if (data.success) {
-                console.log('Token exists:', token);
-                console.log('Visitor ID:', data.data.visitor_id);
-                console.log('User ID:', data.data.user_id);
-                return data.data;
+            if (visitorData.success) {
+                // Step 2 - Build visitor object
+                const visitor = {
+                    visitor_id:     visitorData.data.visitor_id,
+                    visitor_token:  visitorData.data.visitor_token,
+                    terminal:       visitorData.data.terminal,
+                    ip_address:     visitorData.data.ip_address,
+                    created_at:     visitorData.data.created_at,
+                    user:           null
+                };
+
+                // Step 3 - If user_id exists, get user data
+                if (visitorData.data.user_id) {
+                    const userResponse = await fetch('/api/user/' + visitorData.data.user_id);
+                    const userData = await userResponse.json();
+
+                    if (userData.success) {
+                        visitor.user = {
+                            user_id:        userData.data.user_id,
+                            username:       userData.data.username,
+                            email:          userData.data.email,
+                            address:        userData.data.address,
+                            age:            userData.data.age,
+                            phone_number:   userData.data.phone_number,
+                            number_covered: userData.data.number_covered,
+                            family_status:  userData.data.family_status,
+                            is_enabled:     userData.data.is_enabled,
+                            created_at:     userData.data.created_at
+                        };
+
+                        console.log('Welcome back:', visitor.user.username);
+                    }
+                } else {
+                    console.log('Visitor is anonymous (no user linked)');
+                }
+
+                console.log('Visitor object:', visitor);
+                return visitor;
+
             } else {
-                // Token exists in localStorage but not in DB
+                // Token not found in DB - register new visitor
                 console.log('Token not found in DB, registering new visitor...');
                 localStorage.removeItem('chatbot20_token');
                 localStorage.removeItem('chatbot20_visitor_id');
@@ -61,10 +103,10 @@ async function checkToken() {
             console.error('API error:', error);
             return null;
         }
+
     } else {
         console.log('No token found, registering visitor...');
-        const newToken = await registerVisitor();
-        return newToken;
+        return await registerVisitor();
     }
 }
 
@@ -102,6 +144,22 @@ function sendMessage() {
     messages.scrollTop = messages.scrollHeight;
 }
 
+function displayWelcomeMessage(visitor) {
+    const messages = document.getElementById('messages');
+    const botMsg = document.createElement('div');
+    botMsg.className = 'message bot';
+
+    if (visitor && visitor.user && visitor.user.username) {
+        botMsg.innerHTML = 'Bot: Hello ' + visitor.user.username + '! How can I help you?';
+    } else {
+        botMsg.innerHTML = 'Bot: Hello! How can I help you?';
+    }
+
+    messages.appendChild(botMsg);
+}
+
 window.onload = async function () {
-    await checkToken();
+    //await checkToken();
+    const visitor = await checkToken();
+    displayWelcomeMessage(visitor);
 };
