@@ -21,9 +21,9 @@ use app\Repository\ConversationAnswerRepository;
 use app\Service\ConversationAnswerService;
 use app\Controller\ConversationAnswerController;
 
-use App\Repository\AnswerRepository;
-use App\Service\AnswerService;
-use App\Controller\AnswerController;
+use app\Repository\AnswerRepository;
+use app\Service\AnswerService;
+use app\Controller\AnswerController;
 
 // Load .env
 $envPath = '/var/www/.env';
