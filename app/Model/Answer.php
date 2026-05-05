@@ -1,5 +1,5 @@
 <?php
-namespace App\Model;
+namespace app\Model;
 
 class Answer
 {

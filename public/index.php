@@ -21,6 +21,10 @@ use app\Repository\ConversationAnswerRepository;
 use app\Service\ConversationAnswerService;
 use app\Controller\ConversationAnswerController;
 
+use App\Repository\AnswerRepository;
+use App\Service\AnswerService;
+use App\Controller\AnswerController;
+
 // Load .env
 $envPath = '/var/www/.env';
 if (file_exists($envPath)) {
@@ -80,6 +84,12 @@ $conversationAnswerController = new ConversationAnswerController(
         new ConversationAnswerRepository($pdo)
     )
 );
+// Answer
+$answerController = new AnswerController(
+    new AnswerService(
+        new AnswerRepository($pdo)
+    )
+);
 
 // ============ ROUTES ============
 
@@ -130,6 +140,11 @@ elseif ($method === 'POST' && $uri === '/api/conversation-answer') {
 }
 elseif ($method === 'GET' && preg_match('#^/api/conversation-answer/(\d+)$#', $uri, $matches)) {
     $conversationAnswerController->getByConversationId((int) $matches[1]);
+}
+
+// Answer
+elseif ($method === 'GET' && preg_match('#^/api/answer/question/(\d+)$#', $uri, $matches)) {
+    $answerController->getByQuestionId((int) $matches[1]);
 }
 
 // Home

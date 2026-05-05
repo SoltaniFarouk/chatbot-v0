@@ -1,7 +1,7 @@
 <?php
-namespace App\Service;
+namespace app\Service;
 
-use App\Repository\AnswerRepository;
+use app\Repository\AnswerRepository;
 
 class AnswerService
 {
