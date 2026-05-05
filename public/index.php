@@ -94,15 +94,27 @@ $answerController = new AnswerController(
 // ============ ROUTES ============
 
 // Visitor
+// POST /api/visitor/register
 if ($method === 'POST' && $uri === '/api/visitor/register') {
     $visitorController->register();
 }
+// GET /api/visitor/{token}
 elseif ($method === 'GET' && preg_match('#^/api/visitor/([a-f0-9]+)$#', $uri, $matches)) {
     $visitorController->getByToken($matches[1]);
 }
+// DELETE /api/visitor/{id}
 elseif ($method === 'DELETE' && preg_match('#^/api/visitor/(\d+)$#', $uri, $matches)) {
     $visitorController->delete((int) $matches[1]);
 }
+// PUT /api/visitor/token/{token}
+elseif ($method === 'PUT' && preg_match('#^/api/visitor/token/([a-f0-9]+)$#', $uri, $matches)) {
+    $visitorController->updateByToken($matches[1]);
+}
+// PUT /api/visitor/{id}
+elseif ($method === 'PUT' && preg_match('#^/api/visitor/(\d+)$#', $uri, $matches)) {
+    $visitorController->updateById((int) $matches[1]);
+}
+
 
 // User
 elseif ($method === 'GET' && $uri === '/api/user') {

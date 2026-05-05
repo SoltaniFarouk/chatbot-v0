@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Service;
 
 use app\Model\Visitor;
@@ -9,7 +10,11 @@ class VisitorService
     private VisitorRepository $repository;
 
     private const ALLOWED_TERMINALS = [
-        'mobile', 'desktop', 'tablet', 'bot', 'unknown'
+        'mobile',
+        'desktop',
+        'tablet',
+        'bot',
+        'unknown'
     ];
 
     public function __construct(VisitorRepository $repository)
@@ -38,9 +43,9 @@ class VisitorService
 
         $visitor = new Visitor(
             visitor_token: $token,
-            terminal:      $terminal,
-            user_id:       $user_id,
-            ip_address:    $ip_address
+            terminal: $terminal,
+            user_id: $user_id,
+            ip_address: $ip_address
         );
 
         return $this->repository->create($visitor);
@@ -69,5 +74,48 @@ class VisitorService
     private function generateToken(): string
     {
         return bin2hex(random_bytes(32));
+    }
+
+    private const ALLOWED_TERMINALS = [
+        'mobile',
+        'desktop',
+        'tablet',
+        'bot',
+        'unknown'
+    ];
+
+    private const ALLOWED_FIELDS = [
+        'user_id',
+        'ip_address',
+        'terminal'
+    ];
+
+    public function updateByToken(string $token, array $fields): bool
+    {
+        $this->validateFields($fields);
+        return $this->repository->updateByToken($token, $fields);
+    }
+
+    public function updateById(int $id, array $fields): bool
+    {
+        $this->validateFields($fields);
+        return $this->repository->updateById($id, $fields);
+    }
+
+    private function validateFields(array $fields): void
+    {
+        if (empty($fields)) {
+            throw new \InvalidArgumentException('No fields to update');
+        }
+
+        foreach ($fields as $key => $value) {
+            if (!in_array($key, self::ALLOWED_FIELDS)) {
+                throw new \InvalidArgumentException("Field '$key' is not allowed to update");
+            }
+        }
+
+        if (isset($fields['terminal']) && !in_array($fields['terminal'], self::ALLOWED_TERMINALS)) {
+            throw new \InvalidArgumentException('Invalid terminal value');
+        }
     }
 }

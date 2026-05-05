@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Repository;
 
 use app\Model\Visitor;
@@ -85,6 +86,52 @@ class VisitorRepository
         ]);
     }
 
+    public function updateByToken(string $token, array $fields): bool
+    {
+        if (empty($fields)) return false;
+
+        $setParts = [];
+        $params   = [];
+
+        foreach ($fields as $key => $value) {
+            $setParts[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+
+        $params[':token'] = $token;
+
+        $stmt = $this->pdo->prepare("
+        UPDATE tb_visitor 
+        SET " . implode(', ', $setParts) . "
+        WHERE visitor_token = :token
+        ");
+
+        return $stmt->execute($params);
+    }
+
+    public function updateById(int $id, array $fields): bool
+    {
+        if (empty($fields)) return false;
+
+        $setParts = [];
+        $params   = [];
+
+        foreach ($fields as $key => $value) {
+            $setParts[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+
+        $params[':id'] = $id;
+
+        $stmt = $this->pdo->prepare("
+        UPDATE tb_visitor 
+        SET " . implode(', ', $setParts) . "
+        WHERE visitor_id = :id
+        ");
+
+        return $stmt->execute($params);
+    }
+
     public function delete(int $id): bool
     {
         $stmt = $this->pdo->prepare("
@@ -97,12 +144,12 @@ class VisitorRepository
     {
         return new Visitor(
             visitor_token: $row['visitor_token'],
-            terminal:      $row['terminal'],
-            user_id:       $row['user_id'],
-            ip_address:    $row['ip_address'],
-            visitor_id:    $row['visitor_id'],
-            created_at:    $row['created_at'],
-            updated_at:    $row['updated_at']
+            terminal: $row['terminal'],
+            user_id: $row['user_id'],
+            ip_address: $row['ip_address'],
+            visitor_id: $row['visitor_id'],
+            created_at: $row['created_at'],
+            updated_at: $row['updated_at']
         );
     }
 }

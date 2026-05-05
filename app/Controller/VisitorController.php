@@ -1,4 +1,5 @@
 <?php
+
 namespace app\Controller;
 
 use app\Service\VisitorService;
@@ -22,8 +23,8 @@ class VisitorController
 
         $visitor = $this->service->registerVisitor(
             ip_address: $ip,
-            terminal:   $terminal,
-            user_id:    $user_id
+            terminal: $terminal,
+            user_id: $user_id
         );
 
         $this->json([
@@ -82,6 +83,88 @@ class VisitorController
             'success' => true,
             'message' => 'Visitor deleted successfully'
         ]);
+    }
+
+    // PUT /api/visitor/token/{token}
+    public function updateByToken(string $token): void
+    {
+        $data = $this->getJsonBody();
+
+        if (empty($data)) {
+            $this->json([
+                'success' => false,
+                'message' => 'No data provided'
+            ], 400);
+            return;
+        }
+
+        try {
+            $updated = $this->service->updateByToken($token, $data);
+
+            if (!$updated) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'Visitor not found or nothing updated'
+                ], 404);
+                return;
+            }
+
+            $this->json([
+                'success' => true,
+                'message' => 'Visitor updated successfully'
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // PUT /api/visitor/{id}
+    public function updateById(int $id): void
+    {
+        $data = $this->getJsonBody();
+
+        if (empty($data)) {
+            $this->json([
+                'success' => false,
+                'message' => 'No data provided'
+            ], 400);
+            return;
+        }
+
+        try {
+            $updated = $this->service->updateById($id, $data);
+
+            if (!$updated) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'Visitor not found or nothing updated'
+                ], 404);
+                return;
+            }
+
+            $this->json([
+                'success' => true,
+                'message' => 'Visitor updated successfully'
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     private function getJsonBody(): array
