@@ -132,6 +132,10 @@ elseif ($method === 'GET' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) 
 elseif ($method === 'DELETE' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
     $userController->delete((int) $matches[1]);
 }
+if ($method === 'PUT' && preg_match('#^/api/user/(\d+)$#', $uri, $matches)) {
+    $userController->updateById((int)$matches[1]);
+    exit;
+}
 
 // Question
 elseif ($method === 'GET' && $uri === '/api/question') {

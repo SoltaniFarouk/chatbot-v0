@@ -1,0 +1,72 @@
+/* CENTRAGE GLOBAL */
+.table-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* TABLE CONTAINER */
+.table-container {
+  width: 80%;
+  max-width: 900px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* TITLE */
+.table-container h2 {
+  margin-bottom: 15px;
+}
+
+/* SELECT */
+.table-container select {
+  padding: 6px;
+  margin-bottom: 15px;
+}
+
+/* TABLE */
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.table-container th,
+.table-container td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.table-container th {
+  background: #222;
+  color: white;
+}
+
+.table-container tr:hover {
+  background: #f5f5f5;
+}
+
+/* PAGINATION */
+.pagination {
+  margin-top: 15px;
+}
+
+.pagination button {
+  margin: 3px;
+  padding: 6px 10px;
+  border: 1px solid #333;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: #222;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

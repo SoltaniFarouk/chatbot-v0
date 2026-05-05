@@ -133,6 +133,66 @@ class UserService
         return $this->repository->update($user);
     }
 
+    // function updateuserbyid using updateById in repository
+    public function updateUserById(int $id, array $data): bool
+    {
+        if (empty($data)) {
+            throw new \InvalidArgumentException('No data provided for update');
+        }
+
+        // Allowed fields (security)
+        $allowedFields = [
+            'username',
+            'email',
+            'address',
+            'age',
+            'phone_number',
+            'number_covered',
+            'family_status',
+            'is_enabled'
+        ];
+
+        // Filter only allowed fields
+        $filteredData = array_intersect_key($data, array_flip($allowedFields));
+
+        if (empty($filteredData)) {
+            throw new \InvalidArgumentException('No valid fields to update');
+        }
+
+        // Validation
+        if (
+            isset($filteredData['email']) &&
+            !filter_var($filteredData['email'], FILTER_VALIDATE_EMAIL)
+        ) {
+            throw new \InvalidArgumentException('Invalid email address');
+        }
+
+        if (
+            isset($filteredData['family_status']) &&
+            !in_array($filteredData['family_status'], self::ALLOWED_FAMILY_STATUS)
+        ) {
+            throw new \InvalidArgumentException('Invalid family status');
+        }
+
+        // Check username uniqueness
+        if (isset($filteredData['username'])) {
+            $existing = $this->repository->findByUsername($filteredData['username']);
+            if ($existing && $existing->user_id !== $id) {
+                throw new \InvalidArgumentException('Username already exists');
+            }
+        }
+
+        // Check email uniqueness
+        if (isset($filteredData['email'])) {
+            $existing = $this->repository->findByEmail($filteredData['email']);
+            if ($existing && $existing->user_id !== $id) {
+                throw new \InvalidArgumentException('Email already exists');
+            }
+        }
+
+        return $this->repository->updateById($id, $filteredData);
+    }
+
     public function deleteUser(int $id): bool
     {
         return $this->repository->delete($id);

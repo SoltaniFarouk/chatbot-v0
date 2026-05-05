@@ -85,6 +85,38 @@ class UserController
         }
     }
 
+    // PUT /api/user/{id}
+    public function updateById(int $id): void
+    {
+        $data = $this->getJsonBody();
+
+        try {
+            $updated = $this->service->updateUserById($id, $data);
+
+            if (!$updated) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'User not found or nothing updated'
+                ], 404);
+                return;
+            }
+
+            // Optional: return updated user
+            $user = $this->service->getUserById($id);
+
+            $this->json([
+                'success' => true,
+                'message' => 'User updated successfully',
+                'data'    => $user ? $this->format($user) : null
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
+
     // GET /api/user/{id}
     public function getById(int $id): void
     {

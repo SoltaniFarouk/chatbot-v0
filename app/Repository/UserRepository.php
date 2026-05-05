@@ -45,7 +45,7 @@ class UserRepository
             (username, email)
         VALUES 
             (:username, :email)
-    ");
+        ");
 
         $stmt->execute([
             ':username' => $user->username,
@@ -126,6 +126,27 @@ class UserRepository
             ':is_enabled'     => $user->is_enabled,
             ':user_id'        => $user->user_id,
         ]);
+    }
+
+    public function updateById(int $id, array $data): bool
+    {
+        if (empty($data)) {
+            return false; // nothing to update
+        }
+
+        // Build dynamic SET clause
+        $fields = [];
+        $params = [':user_id' => $id];
+
+        foreach ($data as $column => $value) {
+            $fields[] = "$column = :$column";
+            $params[":$column"] = $value;
+        }
+
+        $sql = "UPDATE tb_user SET " . implode(', ', $fields) . " WHERE user_id = :user_id";
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function delete(int $id): bool
