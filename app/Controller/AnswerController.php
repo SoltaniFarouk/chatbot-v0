@@ -57,4 +57,5 @@ class AnswerController
         echo json_encode($data);
         exit;
     }
+    
 }
