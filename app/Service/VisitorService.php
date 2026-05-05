@@ -17,6 +17,12 @@ class VisitorService
         'unknown'
     ];
 
+    private const ALLOWED_FIELDS = [
+        'user_id',
+        'ip_address',
+        'terminal'
+    ];
+
     public function __construct(VisitorRepository $repository)
     {
         $this->repository = $repository;
@@ -76,19 +82,8 @@ class VisitorService
         return bin2hex(random_bytes(32));
     }
 
-    private const ALLOWED_TERMINALS = [
-        'mobile',
-        'desktop',
-        'tablet',
-        'bot',
-        'unknown'
-    ];
 
-    private const ALLOWED_FIELDS = [
-        'user_id',
-        'ip_address',
-        'terminal'
-    ];
+   
 
     public function updateByToken(string $token, array $fields): bool
     {

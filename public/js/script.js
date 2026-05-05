@@ -322,6 +322,20 @@ async function sendMessage() {
                         const userId = userResponse.data.user_id;
                         console.log('User created with ID:', userId);
                     }
+                    
+                    // get id user from object visitor in local storage and display in console log
+                    const visitorToken = localStorage.getItem('chatbot20_token');
+                    console.log('Visitor token:', visitorToken);
+                    console.log('User ID:', userResponse.data.user_id);
+                    //update visitor with user_id
+                    await fetch('/api/visitor/token/' + visitorToken, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userResponse.data.user_id
+                        })
+                    });
+                    
                 } catch (error) {
                     console.error('Error creating user:', error);
                 }
