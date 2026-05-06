@@ -19,6 +19,9 @@ docker-compose restart
 docker exec -it chatbot_v0-db-1 mysql -u user -ppassword
 docker exec chatbot_v0-db-1 mysqldump -u user -ppassword appdb > database/init.sql
 type database\init.sql
+###  remote container
+docker ps -a
+docker exec -it chatbot_v1-app-1 bash
 
 ### API Test (PowerShell)
 Invoke-RestMethod -Uri "http://localhost:8080/api/user/fast" `
