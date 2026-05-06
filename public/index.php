@@ -25,6 +25,10 @@ use app\Repository\AnswerRepository;
 use app\Service\AnswerService;
 use app\Controller\AnswerController;
 
+use app\Repository\PackageRepository;
+use app\Service\PackageService;
+use app\Controller\PackageController;
+
 // Load .env
 $envPath = '/var/www/.env';
 if (file_exists($envPath)) {
@@ -90,7 +94,12 @@ $answerController = new AnswerController(
         new AnswerRepository($pdo)
     )
 );
-
+// Package
+$packageController = new PackageController(
+    new PackageService(
+        new PackageRepository($pdo)
+    )
+);
 // ============ ROUTES ============
 
 // Visitor
@@ -161,6 +170,37 @@ elseif ($method === 'GET' && preg_match('#^/api/conversation-answer/(\d+)$#', $u
 // Answer
 elseif ($method === 'GET' && preg_match('#^/api/answer/question/(\d+)$#', $uri, $matches)) {
     $answerController->getByQuestionId((int) $matches[1]);
+}
+
+// Package
+// GET /api/package
+elseif ($method === 'GET' && $uri === '/api/package') {
+    $packageController->getAll();
+}
+
+// GET /api/package/enabled
+elseif ($method === 'GET' && $uri === '/api/package/enabled') {
+    $packageController->getAllEnabled();
+}
+
+// GET /api/package/{id}
+elseif ($method === 'GET' && preg_match('#^/api/package/(\d+)$#', $uri, $matches)) {
+    $packageController->getById((int) $matches[1]);
+}
+
+// POST /api/package
+elseif ($method === 'POST' && $uri === '/api/package') {
+    $packageController->create();
+}
+
+// PUT /api/package/{id}
+elseif ($method === 'PUT' && preg_match('#^/api/package/(\d+)$#', $uri, $matches)) {
+    $packageController->update((int) $matches[1]);
+}
+
+// DELETE /api/package/{id}
+elseif ($method === 'DELETE' && preg_match('#^/api/package/(\d+)$#', $uri, $matches)) {
+    $packageController->delete((int) $matches[1]);
 }
 
 // Home
