@@ -1,5 +1,6 @@
 <?php
 use app\Connection\Database;
+use app\Router\Router;
 
 use app\Repository\VisitorRepository;
 use app\Service\VisitorService;
@@ -53,6 +54,7 @@ $uri    = rtrim($uri, '/');
 
 // Bootstrap
 $pdo = (new Database())->connect();
+$router = new Router();
 
 // Visitor
 $visitorController = new VisitorController(
@@ -101,7 +103,7 @@ $packageController = new PackageController(
     )
 );
 // ============ ROUTES ============
-
+/*
 // Visitor
 // POST /api/visitor/register
 if ($method === 'POST' && $uri === '/api/visitor/register') {
@@ -214,3 +216,49 @@ else {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Route not found']);
 }
+    */
+
+// ============ ROUTER ============
+$router = new Router();
+
+// Visitor
+$router->post('/api/visitor/register',          fn() => $visitorController->register());
+$router->get('/api/visitor/{token}',            fn($token) => $visitorController->getByToken($token));
+$router->put('/api/visitor/token/{token}',      fn($token) => $visitorController->updateByToken($token));
+$router->put('/api/visitor/{id}',               fn($id) => $visitorController->updateById((int) $id));
+$router->delete('/api/visitor/{id}',            fn($id) => $visitorController->delete((int) $id));
+
+// User
+$router->get('/api/user',                       fn() => $userController->getAll());
+$router->post('/api/user',                      fn() => $userController->create());
+$router->get('/api/user/{id}',                  fn($id) => $userController->getById((int) $id));
+$router->put('/api/user/{id}',                  fn($id) => $userController->updateById((int) $id));
+$router->delete('/api/user/{id}',               fn($id) => $userController->delete((int) $id));
+
+// Question
+$router->get('/api/question',                   fn() => $questionController->getAll());
+$router->get('/api/question/{id}',              fn($id) => $questionController->getById((int) $id));
+
+// Conversation
+$router->post('/api/conversation',              fn() => $conversationController->create());
+
+// ConversationAnswer
+$router->post('/api/conversation-answer',       fn() => $conversationAnswerController->save());
+$router->get('/api/conversation-answer/{id}',   fn($id) => $conversationAnswerController->getByConversationId((int) $id));
+
+// Answer
+$router->get('/api/answer/question/{id}',       fn($id) => $answerController->getByQuestionId((int) $id));
+
+// Package
+$router->get('/api/package',                    fn() => $packageController->getAll());
+$router->get('/api/package/enabled',            fn() => $packageController->getAllEnabled());
+$router->get('/api/package/{id}',               fn($id) => $packageController->getById((int) $id));
+$router->post('/api/package',                   fn() => $packageController->create());
+$router->put('/api/package/{id}',               fn($id) => $packageController->update((int) $id));
+$router->delete('/api/package/{id}',            fn($id) => $packageController->delete((int) $id));
+
+// Home
+$router->get('', fn() => require_once __DIR__ . '/home.php');
+
+// Dispatch
+$router->dispatch($method, $uri);
