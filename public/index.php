@@ -1,34 +1,35 @@
 <?php
-use app\Connection\Database;
-use app\Router\Router;
 
-use app\Repository\VisitorRepository;
-use app\Service\VisitorService;
-use app\Controller\VisitorController;
+use App\Connection\Database;
+use App\Router\Router;
 
-use app\Repository\UserRepository;
-use app\Service\UserService;
-use app\Controller\UserController;
+use App\Repository\VisitorRepository;
+use App\Service\VisitorService;
+use App\Controller\VisitorController;
 
-use app\Repository\QuestionRepository;
-use app\Service\QuestionService;
-use app\Controller\QuestionController;
+use App\Repository\UserRepository;
+use App\Service\UserService;
+use App\Controller\UserController;
 
-use app\Repository\ConversationRepository;
-use app\Service\ConversationService;
-use app\Controller\ConversationController;
+use App\Repository\QuestionRepository;
+use App\Service\QuestionService;
+use App\Controller\QuestionController;
 
-use app\Repository\ConversationAnswerRepository;
-use app\Service\ConversationAnswerService;
-use app\Controller\ConversationAnswerController;
+use App\Repository\ConversationRepository;
+use App\Service\ConversationService;
+use App\Controller\ConversationController;
 
-use app\Repository\AnswerRepository;
-use app\Service\AnswerService;
-use app\Controller\AnswerController;
+use App\Repository\ConversationAnswerRepository;
+use App\Service\ConversationAnswerService;
+use App\Controller\ConversationAnswerController;
 
-use app\Repository\PackageRepository;
-use app\Service\PackageService;
-use app\Controller\PackageController;
+use App\Repository\AnswerRepository;
+use App\Service\AnswerService;
+use App\Controller\AnswerController;
+
+use App\Repository\PackageRepository;
+use App\Service\PackageService;
+use App\Controller\PackageController;
 
 // Load .env
 $envPath = '/var/www/.env';
@@ -42,15 +43,21 @@ if (file_exists($envPath)) {
 }
 
 // Autoload
+/*
 spl_autoload_register(function ($class) {
     $path = '/var/www/' . str_replace('\\', '/', $class) . '.php';
     if (file_exists($path)) require_once $path;
 });
+*/
+// ============ COMPOSER AUTOLOADER ============
+require_once '/var/www/vendor/autoload.php';
+
 
 // Request info
 $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri    = rtrim($uri, '/');
+
 
 // Bootstrap
 $pdo = (new Database())->connect();

@@ -1,0 +1,21 @@
+docker ps -a
+docker exec -it chatbot_v1-app-1 bash
+docker exec -it chatbot_v2-app-1 bash
+
+docker exec -it chatbot_v2-db-1 mysql -u user -ppassword
+docker exec -it chatbot_v0-db-1 mysql -u user -ppassword
+
+docker-compose up --build -d
+docker-compose up -d
+docker-compose down
+docker-compose restart
+docker exec -it chatbot_v0-app-1 mysql -u user -ppassword
+
+docker exec chatbot_v0-db-1 mysqldump -u user -ppassword appdb > database/init.sql
+type database\init.sql
+
+
+Invoke-RestMethod -Uri "http://localhost:8080/api/user/fast" `
+-Method POST `
+-ContentType "application/json" `
+-Body '{"email":"john@test.com"}'
