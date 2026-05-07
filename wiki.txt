@@ -19,3 +19,26 @@ Invoke-RestMethod -Uri "http://localhost:8080/api/user/fast" `
 -Method POST `
 -ContentType "application/json" `
 -Body '{"email":"john@test.com"}'
+
+------------- omposer and the autoloader. PSR-4 ---  
+cat > /var/www/composer.json << 'EOF'
+{
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
+EOF
+
+apt update && apt install -y curl unzip git
+curl -sS https://getcomposer.org/installer | php
+cd /var/www && php composer.phar dump-autoload
